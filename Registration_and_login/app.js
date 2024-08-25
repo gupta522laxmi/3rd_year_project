@@ -81,3 +81,70 @@ app.post('/login', async (req, res) => {
         res.status(500).send('Error during login');
     }
 });
+// Route to handle contact form submissions
+app.post('/contact', async (req, res) => {
+    try {
+        const { name, email, message } = req.body;
+
+        // For simplicity, we're just logging the contact form data to the console.
+        // You could also store this in a database, send an email, etc.
+        console.log('Contact Form Submission:', { name, email, message });
+
+        res.status(200).send('Message received');
+    } catch (err) {
+        res.status(500).send('Error sending message');
+    }
+});
+// const multer = require('multer');
+// const path = require('path');
+// const fs = require('fs');
+
+// // Set up Multer for file uploads
+// const storage = multer.diskStorage({
+//     destination: function (req, file, cb) {
+//         const uploadPath = path.join(__dirname, 'uploads');
+//         if (!fs.existsSync(uploadPath)) {
+//             fs.mkdirSync(uploadPath);
+//         }
+//         cb(null, uploadPath);
+//     },
+//     filename: function (req, file, cb) {
+//         cb(null, Date.now() + path.extname(file.originalname));
+//     }
+// });
+
+// const upload = multer({ storage: storage });
+
+// // Route to handle file uploads
+// app.post('/upload', upload.single('media'), (req, res) => {
+//     try {
+//         // Save file information to the database
+//         const mediaFile = {
+//             filename: req.file.filename,
+//             path: req.file.path,
+//             mimetype: req.file.mimetype,
+//         };
+
+//         // You can save the file info in your database (like MongoDB)
+//         // For example: await Media.create(mediaFile);
+
+//         res.status(201).send('File uploaded successfully');
+//     } catch (err) {
+//         res.status(500).send('Error uploading file');
+//     }
+// });
+
+// // Route to get all uploaded media files
+// app.get('/media', async (req, res) => {
+//     try {
+//         // Fetch all media files from the database
+//         // For example: const mediaFiles = await Media.find({});
+        
+//         // Send the media file information as a response
+//         res.json(mediaFiles);
+//     } catch (err) {
+//         res.status(500).send('Error fetching media files');
+//     }
+// });
+
+

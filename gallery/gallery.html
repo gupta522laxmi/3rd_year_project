@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        input[type="file"] {
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #555;
+        }
+        .gallery {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .gallery img, .gallery video {
+            max-width: 100%;
+            border: 2px solid #ccc;
+            border-radius: 4px;
+        }
+        .gallery video {
+            max-height: 200px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Gallery</h1>
+        <form id="uploadForm">
+            <input type="file" id="media" name="media" accept="image/*,video/*" required>
+            <button type="submit">Upload</button>
+        </form>
+
+        <div class="gallery" id="gallery"></div>
+    </div>
+
+    <script>
+        // Function to fetch and display media files
+        async function loadGallery() {
+            const response = await fetch('http://localhost:3000/media');
+            const mediaFiles = await response.json();
+            const gallery = document.getElementById('gallery');
+            gallery.innerHTML = '';
+
+            mediaFiles.forEach(file => {
+                if (file.mimetype.startsWith('image/')) {
+                    const img = document.createElement('img');
+                    img.src = `http://localhost:3000/${file.path}`;
+                    gallery.appendChild(img);
+                } else if (file.mimetype.startsWith('video/')) {
+                    const video = document.createElement('video');
+                    video.src = `http://localhost:3000/${file.path}`;
+                    video.controls = true;
+                    gallery.appendChild(video);
+                }
+            });
+        }
+
+        // Load gallery on page load
+        loadGallery();
+
+        // Handle file upload
+        document.getElementById('uploadForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const formData = new FormData();
+            const media = document.getElementById('media').files[0];
+            formData.append('media', media);
+
+            const response = await fetch('http://localhost:3000/upload', {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (response.status === 201) {
+                alert('File uploaded successfully');
+                loadGallery(); // Reload the gallery after upload
+            } else {
+                alert('Error uploading file');
+            }
+        });
+    </script>
+</body>
+</html>
